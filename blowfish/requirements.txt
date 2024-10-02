@@ -1,0 +1,13 @@
+python-dotenv==1.0.1
+umap-learn==0.5.5
+hdbscan==0.8.33
+faiss-cpu==1.8.0
+httpx==0.27.0
+levenshtein==0.25.1
+sentence-transformers==2.7.0
+pandas==2.2.2
+giotto-tda==0.6.0
+langchain-openai==0.1.7
+numba==0.59.0
+pynndescent==0.5.11
+shap==0.43.0
