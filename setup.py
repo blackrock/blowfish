@@ -8,7 +8,7 @@ setup(
     description='A Python project focused on vector search, explainability, polysemy, and disambiguation in AI.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://dev.azure.com/1A4D/Aladdin%20AI%20Engineering/_git/blowfish',
+    url='https://github.com/blackrock/blowfish',
     packages=find_packages(),
     install_requires=[
         # List your project's dependencies here.
@@ -31,9 +31,9 @@ setup(
     },
     keywords='vector search, explainability, polysemy, disambiguation',
     project_urls={
-        'Bug Reports': 'https://internal.wiki/bug-reporting',
-        'Source': 'https://dev.azure.com/1A4D/Aladdin%20AI%20Engineering/_git/blowfish',
-        'How to Contribute': 'https://internal.wiki/contributing-to-blowfish'
+        'Bug Reports': 'https://github.com/blackrock/blowfish/issues',
+        'Source': 'https://github.com/blackrock/blowfish',
+        'How to Contribute': 'https://github.com/blackrock/blowfish/blob/main/CONTRIBUTING.md'
     },
-    license='Proprietary - For BlackRock Internal Use Only. Open sourcing subject to approval.',
+    license='Apache License 2.0',
 )

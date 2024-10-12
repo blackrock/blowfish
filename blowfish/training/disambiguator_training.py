@@ -24,7 +24,7 @@ from sklearn.neighbors import KernelDensity
 from sklearn.utils import shuffle
 
 from blowfish.utils.constants import DEFAULT_KDE_FEATURES
-from blowfish.calculations.calculations import calculate_relevant_features
+from blowfish.calculations import calculate_relevant_features
 
 
 class DisambiguationModelGenerator(BaseModel):
@@ -87,6 +87,9 @@ class DisambiguationModelGenerator(BaseModel):
     def generate_queries_features(self, 
                                   dataframe: pd.DataFrame,
                                   kde_features_order: List[str] = DEFAULT_KDE_FEATURES) -> pd.DataFrame:
+        """
+            Generats the relevant features for the queries
+        """
         queries_features = []
         for _, sub_df in dataframe.groupby("query_id"):
             sub_df = sub_df.sort_values(by="rank").drop_duplicates(["docname", "query_id", "score", "rank"])
@@ -110,6 +113,9 @@ class DisambiguationModelGenerator(BaseModel):
     
 
     def save_kde_model(self, kde: KernelDensity) -> None:
+        """
+            Saves a provided model as a pickle file
+        """
         with open(self.kde_storage_path + self.kde_storage_name, "wb") as f:
             pickle.dump(kde, f)
 

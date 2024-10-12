@@ -18,11 +18,9 @@ import numpy as np
 import pandas as pd
 import pickle
 import httpx
-from typing import List, ClassVar, Any
+from typing import ClassVar, Any
 from pydantic import BaseModel, Field
-from ast import literal_eval
 from blowfish.utils.embedding_models_factory import EmbeddingModelHooks
-import pathlib
 
 
 class NaiveChunksEmbedding(BaseModel):
@@ -46,44 +44,38 @@ class NaiveChunksEmbedding(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        llm_encoder_class = getattr(EmbeddingModelHooks, 
-                                    self.llm_encoder_type)
+        llm_encoder_class = getattr(EmbeddingModelHooks, self.llm_encoder_type)
         
         if self.disable_ssl:
             self.LLM_encoder = llm_encoder_class(**self.llm_encoder_config, http_client=httpx.Client(verify=False))
         else:
             self.LLM_encoder = llm_encoder_class(**self.llm_encoder_config)
 
-    def generate_LC_embeddings(self,
-                               dfs: pd.DataFrame,
-                               **kwargs):
-        
+    def generate_LC_embeddings(self, dfs: pd.DataFrame, **kwargs):
+        """
+            Adds a column named "chunk_embedding" with the embeddings from the configured LLM
+        """
         chunks_df = dfs
         chunks_df["chunk_embedding"] = list(self.LLM_encoder.encode(chunks_df["Text"].to_list(),**kwargs))
             
         return chunks_df
 
-    def get_chunk_hash_key(self, 
-                           dataframe: pd.DataFrame
-                           ) -> pd.DataFrame:
-        keys = [f"{d}_{idx}" for d, idx in zip(dataframe["docname"],
-                                                 dataframe["chunk_index"])]
+    def get_chunk_hash_key(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        """
+            Creates a unique hash_key for the chunks
+        """
+        keys = [f"{d}_{idx}" for d, idx in zip(dataframe["docname"], dataframe["chunk_index"])]
         dataframe["hash_key"] = keys
         return dataframe
     
-    def save_embeddings_df(self, 
-                           dataframe: pd.DataFrame,
-                           docname: str
-                           ) -> None:
-
+    def save_embeddings_df(self, dataframe: pd.DataFrame, docname: str) -> None:
+        """
+            Saves the embeddings dataframe into a pkl file
+        """
         with open(self.embeddings_storage_dir + docname + "_chunk_embeddings.pkl","wb") as f:
             pickle.dump(dataframe, f)        
     
-    def __call__(self,
-                 input: pd.DataFrame,
-                 docname: str = 'document',
-                 **kwargs) -> pd.DataFrame:
-        
+    def __call__(self, input: pd.DataFrame, docname: str = 'document', **kwargs) -> pd.DataFrame:
         if 'chunk_index' not in input.columns:
             input = input.assign(chunk_index=np.arange(0,len(input),1))
             

@@ -21,6 +21,10 @@ from gtda.homology import VietorisRipsPersistence
 
 
 def calculate_scaled_distance_distribution(sub_df: pd.DataFrame, *args) -> Dict[str, Any]:
+    """
+        Calculates the minimum value, the mean and the interquartile range for the similarity
+        metric (e.g. L2/Cosine/Inner Product)
+    """
     scale = (np.sort(sub_df.score) / np.sort(sub_df.score)[0])[1:]
     
     scale_distribution = {
@@ -31,6 +35,9 @@ def calculate_scaled_distance_distribution(sub_df: pd.DataFrame, *args) -> Dict[
     return scale_distribution
 
 def calculate_first_order_homology_distribution(sub_df: pd.DataFrame, *args) -> Dict[str, Any]:
+    """
+        Calculates the topological features for the embeddings of both the query and retrieved chunks
+    """
     vietorisRipsGenerator = VietorisRipsPersistence(homology_dimensions=(0,1))
 
     chunks_embed = np.array(sub_df["chunk_embeddings"].to_list())
@@ -57,6 +64,9 @@ def calculate_first_order_homology_distribution(sub_df: pd.DataFrame, *args) -> 
 
 
 def calculate_silhouette_score_distribution(sub_df: pd.DataFrame, *args) -> Dict[str, Any]:
+    """
+        Calculates the mean of the standard deviation of the silhouette score
+    """
     silhouette_score_distribution = {
                                     "silhouette_score_mean": sub_df["silhouette_score"].mean(),
                                     "silhouette_score_std": sub_df["silhouette_score"].std()
@@ -65,14 +75,25 @@ def calculate_silhouette_score_distribution(sub_df: pd.DataFrame, *args) -> Dict
 
 
 def calculate_doc_spread(sub_df: pd.DataFrame) -> Dict[str, Any]:
+    """
+        Calculates the number of number of distinct documents of the retrieved chunks over
+        the total number of total chunks retrieved
+    """
     return {"top_k_doc_spread": len(set(sub_df["docname"])) / len(sub_df)}
 
 
 def calculate_topic_spread(sub_df: pd.DataFrame) -> Dict[str, Any]:
+    """
+        Calculates the number of number of distinct topics contained in the the retrieved 
+        chunks over the total number of total chunks retrieved
+    """
     return {"top_k_topic_spread": len(set(sub_df["topic_label"])) / len(sub_df)}
 
 
 def calculate_relevant_features(sub_df: pd.DataFrame, kde_features_order: List[str]) -> Dict[str, Any]:
+    """
+        Computates all features and combines the relevant ones into a dictionary
+    """
     feature_set = set(kde_features_order)
 
     features = calculate_scaled_distance_distribution(sub_df)

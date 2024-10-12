@@ -70,9 +70,9 @@ The docname parameter is an optional parameter in the embedder and clusterer ste
 ```py
 import pandas
 
-from blowfish.ingestion.chunk_embeddings import NaiveChunksEmbedding
-from blowfish.ingestion.topic_clustering import TopicClusterGenerator
-from blowfish.ingestion.vdb_indexing import FaissVDBIndexing
+from blowfish.ingestion import NaiveChunksEmbedding
+from blowfish.ingestion import TopicClusterGenerator
+from blowfish.ingestion import FaissVDBIndexing
 
 # AzureOpenAIEmbeddings Configuration Example
 azure_openai_config = {
@@ -117,9 +117,9 @@ The list of possible features are listed in the [KDE Features section](#kde-feat
 **Important**: ensure that the value in the docname field in your Q&A training set matches the value in the docname field in the topics dataframe. The query evaluation process will use string comparison to match these strings. Different values (e.g. `document1.pdf` vs `document1`) will result in incorrect evaluation.
 
 ```py
-from blowfish.training.queries_embeddings import BulkQueriesEmbedder
-from blowfish.training.queries_evaluation import BulkQueriesEvaluator
-from blowfish.training.disambiguator_training import DisambiguationModelGenerator
+from blowfish.training import BulkQueriesEmbedder
+from blowfish.training import BulkQueriesEvaluator
+from blowfish.training import DisambiguationModelGenerator
 
 # Training Module
 queries_embedder = BulkQueriesEmbedder(**configuration)
@@ -152,8 +152,8 @@ The output from the decider will be one of: "topicspread", "docspread", and "dat
 
 ```py
 import pickle
-from blowfish.inference.scorer import AmbiguityScorer
-from blowfish.inference.decider import FeedbackDecider
+from blowfish.inference import AmbiguityScorer
+from blowfish.inference import FeedbackDecider
 
 kde = pickle.load(...)         # Load saved KDE from training step
 topics_df = pickle.load(...)   #  Load saved topics Dataframe from ingestion step

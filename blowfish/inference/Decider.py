@@ -33,7 +33,9 @@ class FeedbackDecider():
         self.KDE_features_order = kde_features_order
         
     def get_high_accuracy_samples(self, num_samples: int = 50) -> np.array:
-        """Obtain [num_samples] samples from KDE"""
+        """
+            Obtain [num_samples] samples from KDE
+        """
         feat_samples = []
 
         while len(feat_samples) < num_samples:
@@ -51,6 +53,9 @@ class FeedbackDecider():
         return np.array(feat_samples)
     
     def KDE_prediction(self, sample):
+        """
+            Get the probability score for the sample from a given KDE
+        """
         X_test = np.ones(sample.shape[0])
         X_test0 = 1 - X_test
         proba = np.exp(self.KDE.score_samples(np.concatenate([X_test[:,np.newaxis], sample],axis=1)))/\

@@ -20,7 +20,7 @@ from sklearn.neighbors import KernelDensity
 from typing import List, Tuple
 
 from blowfish.utils.constants import DEFAULT_KDE_FEATURES
-from blowfish.calculations.calculations import calculate_relevant_features
+from blowfish.calculations import calculate_relevant_features
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -36,6 +36,9 @@ class AmbiguityScorer():
         self.topics = self.format_topics(topics)
         
     def format_topics(self, topics_df: pd.DataFrame) -> pd.DataFrame:
+        """
+            Formats the column names of the dataframe
+        """
         try:
             required_columns = ["docname", "chunk_embedding", "label", "silhouette_score", "hash_key"]
             assert all([c in topics_df.columns for c in required_columns])
@@ -56,6 +59,9 @@ class AmbiguityScorer():
                                                                    "query_embedding",
                                                                    "chunk_embeddings",
                                                                    "hash_key"]) -> pd.DataFrame:
+        """
+            Combine the relevant topics from the topics dataframe with the query and chunk dataframe
+        """
         try:
             assert all([c in queries_results.columns for c in columns_of_interest])
 
@@ -75,6 +81,9 @@ class AmbiguityScorer():
             return None
     
     def get_correctness_probability(self, sample: List[np.float64]) -> np.float64:
+        """
+            This function calculates the correctness probability for a given sample
+        """
         sample_correct = [1] + sample
         sample_incorrect = [0] + sample
 
@@ -87,6 +96,9 @@ class AmbiguityScorer():
         return proba
         
     def calculate_query_correctness_probability(self, query_df: pd.DataFrame, kde_features_order: List[str] = DEFAULT_KDE_FEATURES) -> pd.DataFrame:
+        """
+            This function calculates the correctness probability for the query & chunk dataframe
+        """
         sample = {}
         features = calculate_relevant_features(query_df, kde_features_order)
         input_samples = [features[feature] for feature in kde_features_order]    # This ensures order

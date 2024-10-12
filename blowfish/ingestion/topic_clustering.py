@@ -67,7 +67,9 @@ class TopicClusterGenerator(BaseModel):
         return dataframe
     
     def run_hdbscan(self, dataframe: pd.DataFrame) -> List[int]:
-            
+        """
+            Performs HDBScan to cluster topics
+        """
         shscore = []
         outliers = []
         skipped_min_samples = []
@@ -114,7 +116,9 @@ class TopicClusterGenerator(BaseModel):
     def cluster_datapoints(self,
                            dataframe: pd.DataFrame, 
                             ) -> pd.DataFrame:
-                
+        """
+            Clusteres the topics with th optimal settings
+        """
         try:
             projected_df = self.detect_umap_nneighbours_optimum(dataframe)
             projected_df = projected_df.assign(label=self.run_hdbscan(projected_df))
@@ -128,7 +132,9 @@ class TopicClusterGenerator(BaseModel):
     def save_topics_df(self,
                        dataframe: pd.DataFrame,
                        docname: str = 'document') -> None:
-        
+        """
+            Saves the generated topics dataframe into a pickle file
+        """
         with open(self.topics_storage_dir + docname + "_chunk_topics.pkl","wb") as f:
             pickle.dump(dataframe, f)    
     

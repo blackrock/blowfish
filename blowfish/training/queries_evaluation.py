@@ -49,6 +49,10 @@ class BulkQueriesEvaluator(BaseModel):
     def evaluate_isin(self,
                       query_series: pd.Series, 
                       answer: pd.Series) -> Tuple[bool]:
+        """
+            Evaluates if the retrieved document matches the answer. This is performed
+            using levenshtein distance.
+        """
         
         docname, content = answer[["docname", "Text"]]
         

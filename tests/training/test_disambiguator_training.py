@@ -1,5 +1,6 @@
 from blowfish.training.disambiguator_training import DisambiguationModelGenerator
 import pandas as pd
+import numpy as np
 from pandas.testing import assert_frame_equal
 
 model = DisambiguationModelGenerator()
@@ -41,14 +42,13 @@ def test_format_qa_eval_df():
         This type doesn't affect training downsteam, it just affects the frame assertion function
     """
     actual["score"] = actual["score"].astype(float)
-    actual["label"] = actual["label"].astype(int)
-    actual["doc_match"] = actual["doc_match"].astype(int)
-    actual["chunk_match"] = actual["chunk_match"].astype(int)
+    actual["label"] = actual["label"].astype(np.int64)
+    actual["doc_match"] = actual["doc_match"].astype(np.int64)
+    actual["chunk_match"] = actual["chunk_match"].astype(np.int64)
     actual["silhouette_score"] = actual["silhouette_score"].astype(float)
-    actual["rank"] = actual["rank"].astype(int)
+    actual["rank"] = actual["rank"].astype(np.int64)
 
     assert_frame_equal(actual, expected)
-
 
 def test_generate_queries_features_filter_sub_df_with_one_chunk():
     features = {
