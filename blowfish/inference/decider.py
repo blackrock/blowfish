@@ -46,7 +46,9 @@ class FeedbackDecider():
                 neg_sample[0,0] = 0.0
                 pos_sample[0,0] = 1.0
 
-                proba = np.exp(self.KDE.score(sample))/(np.exp(self.KDE.score(sample)) + np.exp(self.KDE.score(neg_sample)))
+                log_correct = self.KDE.score(pos_sample)
+                log_incorrect = self.KDE.score(neg_sample)
+                proba = np.exp(log_correct - np.logaddexp(log_correct, log_incorrect))
                 if proba > 0.8:
                     feat_samples.append(sample[0][1:])
 
@@ -58,9 +60,9 @@ class FeedbackDecider():
         """
         X_test = np.ones(sample.shape[0])
         X_test0 = 1 - X_test
-        proba = np.exp(self.KDE.score_samples(np.concatenate([X_test[:,np.newaxis], sample],axis=1)))/\
-                (np.exp(self.KDE.score_samples(np.concatenate([X_test[:,np.newaxis], sample],axis=1)))
-                 + np.exp(self.KDE.score_samples(np.concatenate([X_test0[:,np.newaxis], sample],axis=1))))
+        log_correct = self.KDE.score_samples(np.concatenate([X_test[:, np.newaxis], sample], axis=1))
+        log_incorrect = self.KDE.score_samples(np.concatenate([X_test0[:, np.newaxis], sample], axis=1))
+        proba = np.exp(log_correct - np.logaddexp(log_correct, log_incorrect))
         return proba
     
     def explain_query(self, 
@@ -87,8 +89,8 @@ class FeedbackDecider():
         
         if "top_k_topic_spread" in relevant_features:
             return "topicspread"
-        elif "docspread" in relevant_features:
-            return "top_k_doc_spread"
+        elif "top_k_doc_spread" in relevant_features:
+            return "docspread"
         else:
             return "dataspread"
             

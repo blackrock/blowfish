@@ -90,8 +90,9 @@ class AmbiguityScorer():
         sample_correct = sample_correct[:self.ProbaDensityKernel.n_features_in_]
         sample_incorrect = sample_incorrect[:self.ProbaDensityKernel.n_features_in_]
 
-        proba = np.exp(self.ProbaDensityKernel.score_samples([sample_correct]))/\
-            (np.exp(self.ProbaDensityKernel.score_samples([sample_correct])) + np.exp(self.ProbaDensityKernel.score_samples([sample_incorrect])))
+        log_correct = self.ProbaDensityKernel.score_samples([sample_correct])
+        log_incorrect = self.ProbaDensityKernel.score_samples([sample_incorrect])
+        proba = np.exp(log_correct - np.logaddexp(log_correct, log_incorrect))
         
         return proba
         
