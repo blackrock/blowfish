@@ -96,10 +96,18 @@ def calculate_relevant_features(sub_df: pd.DataFrame, kde_features_order: List[s
     """
     feature_set = set(kde_features_order)
 
-    features = calculate_scaled_distance_distribution(sub_df)
-    features.update(calculate_first_order_homology_distribution(sub_df))
-    features.update(calculate_silhouette_score_distribution(sub_df))
-    features.update(calculate_doc_spread(sub_df))
-    features.update(calculate_topic_spread(sub_df))
+    features = {}
+    feature_groups = [
+        ({"scale_mean", "scale_min", "iq25-75_scale"}, calculate_scaled_distance_distribution),
+        ({"max_homology_birth", "mean_homology_birth", "std_homology_birth",
+          "mean_homology1st_birth", "mean_homology1st_lifetime"},
+         calculate_first_order_homology_distribution),
+        ({"silhouette_score_mean", "silhouette_score_std"}, calculate_silhouette_score_distribution),
+        ({"top_k_doc_spread"}, calculate_doc_spread),
+        ({"top_k_topic_spread"}, calculate_topic_spread),
+    ]
+    for names, calculate in feature_groups:
+        if feature_set.intersection(names):
+            features.update(calculate(sub_df))
 
     return {k: v for k, v in features.items() if k in feature_set}
